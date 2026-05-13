@@ -1,10 +1,12 @@
+require('dotenv').config()
+
 const fs = require('fs')
 const path = require('path')
 const { createClient } = require('@supabase/supabase-js')
 
 const supabase = createClient(
-  'https://khxehrfuhrjmvehvprfu.supabase.co/rest/v1/',
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtoeGVocmZ1aHJqbXZlaHZwcmZ1Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3ODY0OTAxMywiZXhwIjoyMDk0MjI1MDEzfQ.no_4XBIcQJ_IYSprcw2m48De5nAVa6w45G3B2pd_ypM'
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_ROLE_KEY
 )
 
 async function run() {
@@ -20,7 +22,8 @@ async function run() {
     console.log(`Importing ${file}...`)
 
     const raw = fs.readFileSync(
-      path.join(folderPath, file)
+      path.join(folderPath, file),
+      'utf8'
     )
 
     const data = JSON.parse(raw)
@@ -40,6 +43,7 @@ async function run() {
       .insert(formatted)
 
     if (error) {
+      console.log(`Error importing ${file}:`)
       console.log(error)
     } else {
       console.log(`${file} imported`)
