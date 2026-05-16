@@ -1,5 +1,4 @@
 require('dotenv').config()
-
 const fs = require('fs')
 const path = require('path')
 const { createClient } = require('@supabase/supabase-js')
@@ -28,26 +27,26 @@ async function run() {
 
     const data = JSON.parse(raw)
 
-    const formatted = data.map(item => ({
-      ts: item.ts,
-      track_name: item.master_metadata_track_name,
-      artist_name:
-        item.master_metadata_album_artist_name,
-      album_name:
-        item.master_metadata_album_album_name,
-      ms_played: item.ms_played
-    }))
+    for (const item of data) {
+      const { error } = await supabase
+        .from('streams')
+        .insert({
+          ts: item.ts,
+          track_name:
+            item.master_metadata_track_name,
+          artist_name:
+            item.master_metadata_album_artist_name,
+          album_name:
+            item.master_metadata_album_album_name,
+          ms_played: item.ms_played
+        })
 
-    const { error } = await supabase
-      .from('streams')
-      .insert(formatted)
-
-    if (error) {
-      console.log(`Error importing ${file}:`)
-      console.log(error)
-    } else {
-      console.log(`${file} imported`)
+      if (error) {
+        console.log(error)
+      }
     }
+
+    console.log(`${file} imported`)
   }
 
   console.log('ALL DONE')
