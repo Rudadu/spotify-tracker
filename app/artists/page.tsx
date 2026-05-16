@@ -1,9 +1,9 @@
 export const dynamic = 'force-dynamic'
 
 import { supabase } from '@/src/lib/supabase'
-import TracksPage from '@/components/TracksPage'
+import ArtistsPage from '@/components/ArtistsPage'
 
-export default async function Home() {
+export default async function Page() {
 
   const { data } = await supabase
     .from('streams')
@@ -11,6 +11,6 @@ export default async function Home() {
     .limit(100000)
 
   return (
-    <TracksPage data={data || []} />
+    <ArtistsPage data={data || []} />
   )
 }
